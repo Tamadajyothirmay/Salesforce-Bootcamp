@@ -1,5 +1,4 @@
-# Salesforce Interview Readiness Bootcamp
-## Chapter 4 – Building Business Logic with Apex
+
 ### Sprint 4 – Giving Intelligence to Placement Management System
 
 ## 1. What is Business Logic?
