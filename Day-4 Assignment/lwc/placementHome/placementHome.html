@@ -1,0 +1,113 @@
+<template>
+
+    <lightning-card title="Placement Portal">
+
+        <div class="slds-p-around_medium">
+
+            <h1>
+                Welcome to Vishnu Placement Portal
+            </h1>
+
+            <p>
+                Welcome Student 👋
+            </p>
+
+            <p>
+                Today's Date: {todayDate}
+            </p>
+
+
+            <br/>
+
+            <div class="slds-grid slds-wrap slds-gutters">
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <lightning-card title="Students">
+                        <div class="slds-p-around_medium">
+                            <h1>{students}</h1>
+                        </div>
+                    </lightning-card>
+                </div>
+
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <lightning-card title="Companies">
+                        <div class="slds-p-around_medium">
+                            <h1>{companies}</h1>
+                        </div>
+                    </lightning-card>
+                </div>
+
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <lightning-card title="Jobs">
+                        <div class="slds-p-around_medium">
+                            <h1>{jobs}</h1>
+                        </div>
+                    </lightning-card>
+                </div>
+
+
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <lightning-card title="Applications">
+                        <div class="slds-p-around_medium">
+                            <h1>{applications}</h1>
+                        </div>
+                    </lightning-card>
+                </div>
+
+
+            </div>
+
+
+            <br/>
+
+            <h2>Student Information</h2>
+
+            <p>
+                Student Name : {studentName}
+            </p>
+
+            <p>
+                Roll Number : {rollNumber}
+            </p>
+
+            <p>
+                Department : {department}
+            </p>
+
+
+            <br/>
+
+            <lightning-button 
+                label="Show Welcome Message"
+                onclick={handleWelcome}>
+            </lightning-button>
+
+
+            <template if:true={welcomeMessage}>
+                <p class="slds-m-top_medium">
+                    {welcomeMessage}
+                </p>
+            </template>
+
+
+            <br/><br/>
+
+
+            <p>
+                Status : {applicationStatus}
+            </p>
+
+
+            <lightning-button
+                label="Apply Now"
+                onclick={handleApply}>
+            </lightning-button>
+
+
+        </div>
+
+    </lightning-card>
+
+</template>
