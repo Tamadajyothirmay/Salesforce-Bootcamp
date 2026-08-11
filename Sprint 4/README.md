@@ -445,6 +445,8 @@ public class ApplicationService {
 
 The method name represents a business activity.
 
+
+
 Good method names explain what the system is doing.
 
 Examples:
@@ -457,6 +459,8 @@ viewApplicationHistory()
 reopenApplication()
 
 Method names should describe business actions instead of technical operations.
+
+
 
 4.11 Understanding Parameters
 
@@ -480,6 +484,9 @@ public class ApplicationService {
 Parameters provide the required information for a method to complete its task.
 
 Good methods should receive only the information that is necessary.
+
+
+
 
 4.12 Returning Results
 
