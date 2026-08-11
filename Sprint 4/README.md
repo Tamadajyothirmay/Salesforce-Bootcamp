@@ -581,5 +581,388 @@ In Section 4.8 – 4.13, I learned how Apex brings software design to life.
 The Placement Management System moves from understanding business requirements to implementing business logic using Apex classes and methods.
 
 
-After pasting this, save `README.md`. Then your next step is creating the **3 Apex Classes (`StudentService`, `JobService`, `ApplicationService`) in Salesforce**.
+# Chapter 4 – Building Business Logic with Apex
+
+## Sprint 4 – Giving Intelligence to the Placement Management System
+
+### Sprint Objective
+
+The objective of this sprint was to implement business logic in Apex for the Placement Management System.
+
+The system was enhanced to make business decisions automatically when a student applies for a job.
+
+---
+
+## Business Problem
+
+Previously, the Placement Management System could store student, job, and application records, but it did not automatically enforce important placement rules.
+
+The system needed to:
+
+* Prevent duplicate applications
+* Check student eligibility
+* Validate CGPA requirements
+* Validate department requirements
+* Validate year requirements
+* Check active backlogs
+* Save valid applications
+* Enforce application deadlines
+* Provide meaningful feedback
+
+---
+
+## Apex Service Created
+
+### ApplicationService
+
+The main Apex class created during this sprint was:
+
+`ApplicationService`
+
+This class is responsible for handling application-related business logic.
+
+The main method is:
+
+`submitApplication()`
+
+It receives:
+
+* Student Id
+* Job Id
+
+and processes the complete application workflow.
+
+---
+
+## Business Logic Workflow
+
+The application processing follows this sequence:
+
+```text
+Student submits application
+          ↓
+Check for duplicate application
+          ↓
+Check student eligibility
+          ↓
+Check CGPA
+          ↓
+Check Department
+          ↓
+Check Year
+          ↓
+Check Active Backlogs
+          ↓
+Create Application Record
+          ↓
+Save Application
+          ↓
+Display Result
+```
+
+---
+
+## Sprint Backlog
+
+| Story ID | User Story                        | Status      |
+| -------- | --------------------------------- | ----------- |
+| US-1     | Accept a student application      | ✅ Completed |
+| US-2     | Prevent duplicate applications    | ✅ Completed |
+| US-3     | Check application deadline        | ✅ Completed |
+| US-4     | Verify student eligibility        | ✅ Completed |
+| US-5     | Save the application successfully | ✅ Completed |
+| US-6     | Display meaningful feedback       | ✅ Completed |
+
+---
+
+## Student Eligibility Rules
+
+The following student fields were used for eligibility validation:
+
+| Student Field   | API Name             |
+| --------------- | -------------------- |
+| CGPA            | `CGPA__c`            |
+| Department      | `Department__c`      |
+| Year            | `Year__c`            |
+| Active Backlogs | `Active_Backlogs__c` |
+
+The system compares these values with the eligibility requirements stored on the Job record.
+
+---
+
+## Job Eligibility Fields
+
+The following fields were added/used on the Job object:
+
+| Job Field               | API Name                     |
+| ----------------------- | ---------------------------- |
+| Minimum CGPA            | `Minimum_CGPA__c`            |
+| Eligible Department     | `Eligible_Department__c`     |
+| Minimum Year            | `Minimum_Year__c`            |
+| Maximum Active Backlogs | `Maximum_Active_Backlogs__c` |
+| Last Date               | `Last_Date__c`               |
+
+---
+
+## Application Fields
+
+The Application object used the following fields:
+
+| Application Field | API Name          |
+| ----------------- | ----------------- |
+| Student           | `Student__c`      |
+| Job               | `Job__c`          |
+| Status            | `Status__c`       |
+| Applied Date      | `Applied_Date__c` |
+
+---
+
+## Duplicate Application Prevention
+
+Before creating an application, the Apex service checks whether the same student has already applied for the same job.
+
+The logic is:
+
+```text
+Same Student + Same Job
+          ↓
+    Already exists?
+       ↙       ↘
+     YES        NO
+      ↓          ↓
+   Reject      Continue
+```
+
+### Test Result
+
+The first application was successfully submitted.
+
+When the same student attempted to apply for the same job again, the system displayed:
+
+```text
+Duplicate application detected
+```
+
+This confirms that duplicate applications are prevented.
+
+---
+
+## Eligibility Validation
+
+The system checks:
+
+### 1. CGPA
+
+The student's CGPA must satisfy the job's minimum CGPA requirement.
+
+### 2. Department
+
+The student's department must match the department accepted by the job.
+
+### 3. Year
+
+The student's year must satisfy the job's minimum year requirement.
+
+### 4. Active Backlogs
+
+The student's active backlogs must not exceed the maximum allowed by the job.
+
+---
+
+## Application Deadline
+
+The Job object contains a `Last_Date__c` field.
+
+A Salesforce validation rule prevents applications after the deadline.
+
+During testing, an expired job produced:
+
+```text
+Application deadline has expired.
+```
+
+This confirmed that the deadline business rule was working correctly.
+
+---
+
+## Saving the Application
+
+After all validations succeed, Apex creates a new `Application__c` record.
+
+The following information is saved:
+
+* Student
+* Job
+* Status
+* Applied Date
+
+The status is set to:
+
+```text
+Applied
+```
+
+The applied date is set using:
+
+```apex
+Date.today()
+```
+
+The application is then saved using DML:
+
+```apex
+insert application;
+```
+
+---
+
+## Testing Results
+
+### Test 1 – Valid Application
+
+**Expected:**
+
+Application should be created.
+
+**Result:**
+
+```text
+Application submitted successfully
+```
+
+✅ Passed
+
+---
+
+### Test 2 – Duplicate Application
+
+**Expected:**
+
+Duplicate application should be rejected.
+
+**Result:**
+
+```text
+Duplicate application detected
+```
+
+✅ Passed
+
+---
+
+### Test 3 – Expired Application Deadline
+
+**Expected:**
+
+Application should be rejected after the deadline.
+
+**Result:**
+
+```text
+Application deadline has expired.
+```
+
+✅ Passed
+
+---
+
+### Test 4 – Department Eligibility
+
+**Expected:**
+
+Student from an ineligible department should be rejected.
+
+**Result:**
+
+```text
+Eligibility failed: Department not eligible
+```
+
+✅ Passed
+
+---
+
+## Debugging and Engineering Concepts
+
+During this sprint, I also learned about:
+
+* Avoiding SOQL queries inside loops
+* Keeping business logic organized
+* Separating responsibilities
+* Creating reusable service classes
+* Using meaningful method names
+* Handling DML exceptions
+* Testing both successful and unsuccessful scenarios
+* Building business logic incrementally
+
+---
+
+## Engineering Principles Learned
+
+### 1. Understand Before Implementing
+
+Business requirements should be understood before writing code.
+
+### 2. Keep Responsibilities Separate
+
+`ApplicationService` focuses on application-related business operations.
+
+### 3. Build Incrementally
+
+The application was developed one user story at a time.
+
+### 4. Good Naming Improves Readability
+
+Names such as `submitApplication()` clearly describe the business activity.
+
+### 5. Software Should Make Decisions
+
+The system should automatically enforce business rules instead of depending completely on manual checking.
+
+---
+
+## Key Learning
+
+This sprint taught me that Apex is not just about writing code.
+
+Apex is used to translate business requirements into reliable software behavior.
+
+The most important lesson I learned is:
+
+> **Code is not the goal. Well-designed software that solves real business problems is the goal.**
+
+---
+
+## Tools and Technologies
+
+* Salesforce Platform
+* Apex
+* SOQL
+* DML
+* Custom Objects
+* Custom Fields
+* Validation Rules
+* Developer Console
+
+---
+
+## Conclusion
+
+Chapter 4 successfully implemented the first business service for the Placement Management System.
+
+The system can now:
+
+* Receive applications
+* Prevent duplicate applications
+* Validate student eligibility
+* Check CGPA
+* Check department
+* Check year
+* Check active backlogs
+* Enforce application deadlines
+* Save valid applications
+* Provide meaningful feedback
+
+This sprint transformed the Placement Management System from a simple data storage application into a system capable of making business decisions automatically.
+
 
